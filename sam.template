@@ -27,7 +27,7 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Action: [ 'codecommit:CreateBranch', 'codecommit:GitPush' ]
+          - Action: [ 'codecommit:GetRepository', 'codecommit:CreateBranch', 'codecommit:GitPush' ]
             Resource: '*'
             Effect: Allow
       Roles:
