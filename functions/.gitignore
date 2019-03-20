@@ -1,0 +1,7 @@
+# Don't commit libraries!
+*
+
+# Since we're whitelisting, make sure we add any files we want to keep here.
+!.gitignore
+!handler.py
+!requirements.txt

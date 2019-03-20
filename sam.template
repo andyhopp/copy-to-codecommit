@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+
+Description: |
+  A Serverless Application that handles seeding a CodeCommit repository with the 
+  contents of a public repository. In practice, it's effectively a fork to CC.
+
+Resources:
+  CodeCommitLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns: [ 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' ]
+      Path: /
+
+  CodeCommitLambdaPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: GrantAccessToCodeCommit
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: [ 'codecommit:CreateBranch', 'codecommit:GitPush' ]
+            Resource: '*'
+            Effect: Allow
+      Roles:
+        - Ref: CodeCommitLambdaRole
+
+  CopyToCodeCommit:
+    Type: AWS::Serverless::Function
+    DependsOn: [ CodeCommitLambdaRole, CodeCommitLambdaPolicy ]
+    Properties:
+      CodeUri: ./functions
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:982831078337:layer:git:5
+        - !Sub arn:aws:lambda:${AWS::Region}:982831078337:layer:awscli:2
+      Description: Lambda to copy code from one Git repoitory to CodeCommit
+      Handler: handler.lambda_handler
+      MemorySize: 128
+      Role: !GetAtt CodeCommitLambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 600
+
