@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Transform:
-- AWS::Serverless-2016-10-31
+Transform: AWS::Serverless-2016-10-31
 
 Description: |
   A Serverless Application that handles seeding a CodeCommit repository with the 
@@ -49,3 +48,10 @@ Resources:
       Runtime: python3.7
       Timeout: 600
 
+Outputs:
+  FunctionName:
+    Description: The name of the deployed function.
+    Value: !Ref CopyToCodeCommit
+  FunctionArn:
+    Description: The ARN of the deployed function.
+    Value: !GetAtt CopyToCodeCommit.Arn
