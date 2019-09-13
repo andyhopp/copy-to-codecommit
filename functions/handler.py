@@ -22,6 +22,7 @@ def lambda_handler(event, context):
     if event["ResourceProperties"]["SourceRepositoryUrl"] is None:
         respond_cloudformation(event, "FAILED")
         return "Invalid request structure: expected 'SourceRepositoryUrl' resource property."
+
     if event["ResourceProperties"]["TargetRepositoryName"] is None:
         respond_cloudformation(event, "FAILED")
         return "Invalid request structure: expected 'TargetRepositoryName' resource property."
@@ -35,7 +36,9 @@ def lambda_handler(event, context):
         respond_cloudformation(event, "FAILED", e)
         return
 
-    repo_url = repo["repositoryMetadata"]["cloneUrlHttp"]
+    target_url = repo["repositoryMetadata"]["cloneUrlHttp"]
+    target_branch = event["ResourceProperties"]["TargetRepositoryBranch"] if "TargetRepositoryBranch" in event["ResourceProperties"] else "master"
+    source_branch = event["ResourceProperties"]["SourceRepositoryBranch"] if "SourceRepositoryBranch" in event["ResourceProperties"] else "master"
     
     try:
         os.environ["PATH"] = os.environ["PATH"] + ":/opt/awscli"
@@ -52,10 +55,10 @@ def lambda_handler(event, context):
         dir_name = os.path.splitext(os.path.basename(event["ResourceProperties"]["SourceRepositoryUrl"]))[0]
         os.chdir(dir_name)
 
-        print("Adding remote '{}'".format(repo_url))
-        subprocess.run(["git", "remote", "add", "workshop-repo", repo_url], check=True)
+        print("Adding remote '{}'".format(target_url))
+        subprocess.run(["git", "remote", "add", "target-repo", target_url], check=True)
         print("Pushing to remote...")
-        subprocess.run(["git", "push", "workshop-repo", "master"], check=True)
+        subprocess.run(["git", "push", "target-repo", ":".join([source_branch, target_branch])], check=True)
         
         print("Done!")
 
