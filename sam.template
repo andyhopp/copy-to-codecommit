@@ -30,6 +30,9 @@ Resources:
           - Action: [ 'codecommit:GetRepository', 'codecommit:CreateBranch', 'codecommit:GitPush' ]
             Resource: '*'
             Effect: Allow
+          - Action: [ 'codecommit:BatchGet*', 'codecommit:BatchDescribe*', 'codecommit:Get*', 'codecommit:Describe*', 'codecommit:List*', 'codecommit:GitPull' ]
+            Resource: '*'
+            Effect: Allow
       Roles:
         - Ref: CodeCommitLambdaRole
 
