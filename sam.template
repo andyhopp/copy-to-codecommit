@@ -5,6 +5,16 @@ Description: |
   A Serverless Application that handles seeding a CodeCommit repository with the 
   contents of a public repository. In practice, it's effectively a fork to CC.
 
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: CopyRepoToCodeCommit
+    Description: This SAR app is designed for use in CloudFormation as a Custom Resource to copy the contents from a publicly-accessible Git repository to a CodeCommit repo. In practice, it's very similar to a fork of the repo to CodeCommit.
+    Author: Andy Hopper
+    SpdxLicenseId: MIT
+    ReadmeUrl: README.md
+    SemanticVersion: 1.0.3
+    SourceCodeUrl: https://github.com/andyhopp/copy-to-codecommit
+
 Resources:
   CodeCommitLambdaRole:
     Type: AWS::IAM::Role
