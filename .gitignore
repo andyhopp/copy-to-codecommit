@@ -1,1 +1,2 @@
 *.output.template
+.aws-sam
